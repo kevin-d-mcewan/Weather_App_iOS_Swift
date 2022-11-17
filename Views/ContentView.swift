@@ -11,6 +11,7 @@ struct ContentView: View {
     // Initializing our LocationManager class
     @StateObject var locationManager = LocationManager()
     
+    
     var body: some View {
         VStack {
             
