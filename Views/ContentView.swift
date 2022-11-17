@@ -10,15 +10,25 @@ import SwiftUI
 struct ContentView: View {
     // Initializing our LocationManager class
     @StateObject var locationManager = LocationManager()
-    
+    var weatherManager = WeatherManager()
+    @State var weather: ResponseBody?
     
     var body: some View {
         VStack {
-            
             // An if statement to show cordinates of user but if statement bc sharing coordinates is optional
             if let location = locationManager.location {
                 // print out long and lat cord
-                Text("Your coordinates are: \(location.longitude), \(location.latitude)")
+                if let weather = weather {
+                    WeatherView(weather: weather)                } else {
+                    LoadingView()
+                        .task {
+                            do {
+                                weather = try await weatherManager.getCurrentWeather(latitude:location.latitude,                    longitude: location.longitude)
+                            } catch {
+                                print("Error getting weather: \(error)")
+                            }
+                        }
+                }
             } // If coords are given we will show a progress bar but if no coords then we will just show the regular 'Welcome Screen'
                 else {
                 if locationManager.isLoading {
